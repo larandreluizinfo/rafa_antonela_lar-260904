@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Princess - Castelo das Princesas</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>👑 Princess 👑</h1>
+    <p>Castelo das Princesas</p>
+  </header>
+
+  <div class="controls-info">
+    <div class="control-player">
+      <span class="dot lais"></span> <strong>Lais</strong> (setas) + passeia com o <strong>🐱 gato</strong>
+    </div>
+    <div class="control-player">
+      <span class="dot sofia"></span> <strong>Sofia</strong> (WASD) + passeia com o <strong>🐶 cachorro</strong>
+    </div>
+  </div>
+
+  <div id="world">
+    <!-- Castelo da Lais -->
+    <div class="castle castle-lais" id="castleLais">
+      <div class="castle-top">👑</div>
+      <div class="castle-body">
+        <div class="castle-name">Lais</div>
+      </div>
+    </div>
+
+    <!-- Castelo da Sofia -->
+    <div class="castle castle-sofia" id="castleSofia">
+      <div class="castle-top">👸</div>
+      <div class="castle-body">
+        <div class="castle-name">Sofia</div>
+      </div>
+    </div>
+
+    <!-- Personagens -->
+    <div class="player" id="lais" data-owner="1">
+      <div class="emoji">👸</div>
+      <div class="name-tag lais">Lais</div>
+    </div>
+    <div class="player" id="sofia" data-owner="2">
+      <div class="emoji">👸</div>
+      <div class="name-tag sofia">Sofia</div>
+    </div>
+
+    <!-- Pets -->
+    <div class="pet" id="gato">
+      <div class="emoji">🐱</div>
+      <div class="name-tag">Gato</div>
+    </div>
+    <div class="pet" id="gato2">
+      <div class="emoji">🐱</div>
+      <div class="name-tag">Gato</div>
+    </div>
+    <div class="pet" id="cachorro">
+      <div class="emoji">🐶</div>
+      <div class="name-tag">Cachorro</div>
+    </div>
+
+    <!-- Atividades do castelo -->
+    <div class="activity" id="atv1" style="left:0px; top:0px;">🌹</div>
+    <div class="activity" id="atv2" style="left:110px; top:0px;">🪞</div>
+    <div class="activity" id="atv3" style="left:220px; top:0px;">👗</div>
+    <div class="activity" id="atv4" style="left:0px; top:110px;">🎀</div>
+    <div class="activity" id="atv5" style="left:110px; top:110px;">💎</div>
+    <div class="activity" id="atv6" style="left:220px; top:110px;">👑</div>
+    <div class="activity" id="atv7" style="left:560px; top:0px;">🌹</div>
+    <div class="activity" id="atv8" style="left:670px; top:0px;">🪞</div>
+    <div class="activity" id="atv9" style="left:780px; top:0px;">👗</div>
+    <div class="activity" id="atv10" style="left:560px; top:110px;">🎀</div>
+    <div class="activity" id="atv11" style="left:670px; top:110px;">💎</div>
+    <div class="activity" id="atv12" style="left:780px; top:110px;">👑</div>
+  </div>
+
+  <div id="progress">
+    <div class="progress-card">
+      <span class="dot lais"></span> Lais: <span id="laisScore">0</span>/6
+      <div class="bar"><div id="laisBar" class="fill lais"></div></div>
+    </div>
+    <div class="progress-card">
+      <span class="dot sofia"></span> Sofia: <span id="sofiaScore">0</span>/6
+      <div class="bar"><div id="sofiaBar" class="fill sofia"></div></div>
+    </div>
+  </div>
+
+  <div id="modal" class="hidden">
+    <div id="modal-content">
+      <h2 id="modal-title"></h2>
+      <p id="modal-text"></p>
+      <button id="modal-close">Fechar</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
