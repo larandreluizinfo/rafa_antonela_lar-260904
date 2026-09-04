@@ -1,46 +1,49 @@
-const activities = [
-  { id: 'atv1', name: 'Plantar as rosas do jardim', emoji: '🌹' },
-  { id: 'atv2', name: 'Se olhar no espelho mágico', emoji: '🪞' },
-  { id: 'atv3', name: 'Provar o vestido de festa', emoji: '👗' },
-  { id: 'atv4', name: 'Amarrar as fitas no cabelo', emoji: '🎀' },
-  { id: 'atv5', name: 'Guardar a joia da coroa', emoji: '💎' },
-  { id: 'atv6', name: 'Brincar com a coroa', emoji: '👑' },
+const ACTIVITIES = [
+  { id: '1', name: 'Plantar as rosas do jardim', emoji: '🌹' },
+  { id: '2', name: 'Se olhar no espelho mágico', emoji: '🪞' },
+  { id: '3', name: 'Provar o vestido de festa', emoji: '👗' },
+  { id: '4', name: 'Amarrar as fitas no cabelo', emoji: '🎀' },
+  { id: '5', name: 'Guardar a joia da coroa', emoji: '💎' },
+  { id: '6', name: 'Ler um livro de histórias', emoji: '📚' },
+  { id: '7', name: 'Pintar um quadro', emoji: '🎨' },
+  { id: '8', name: 'Cantar uma música', emoji: '🎵' },
 ];
 
-// Mapeia cada atividade a dono (1 = Lais, 2 = Sofia)
-const activityOwner = {
-  atv1: 1, atv2: 1, atv3: 1, atv4: 1, atv5: 1, atv6: 1,
-  atv7: 2, atv8: 2, atv9: 2, atv10: 2, atv11: 2, atv12: 2,
-};
+// Mapeia cada atividade ao dono (1 = Lais, 2 = Sofia)
+const activityOwner = {};
+'12345678'.split('').forEach(id => activityOwner['latv' + id] = 1);
+'12345678'.split('').forEach(id => activityOwner['satv' + id] = 2);
 
 const scores = { 1: 0, 2: 0 };
+const dresses = { 1: false, 2: false }; // vestido trocado ainda não
+
 const players = {
-  1: { keys: {}, pos: { x: 200, y: 300 }, petId: 'gato' },
-  2: { keys: {}, pos: { x: 650, y: 300 }, petId: 'cachorro' },
+  1: { keys: {}, pos: { x: 200, y: 300 }, petId: 'gato', emojiEl: '.lais-emoji' },
+  2: { keys: {}, pos: { x: 650, y: 300 }, petId: 'cachorro', emojiEl: '.sofia-emoji' },
 };
 
-// Posições dos pets (seguem a princesa)
 const pets = {
   gato: { pos: { x: 170, y: 330 }, owner: 1 },
   cachorro: { pos: { x: 620, y: 330 }, owner: 2 },
 };
 
 const WORLD_W = 900;
-const WORLD_H = 480;
+const WORLD_H = 560;
 const STEP = 4;
 
 const laisEl = document.getElementById('lais');
 const sofiaEl = document.getElementById('sofia');
 const gatoEl = document.getElementById('gato');
 const cachorroEl = document.getElementById('cachorro');
+const wardrobeLaisEl = document.getElementById('wardrobeLais');
+const wardrobeSofiaEl = document.getElementById('wardrobeSofia');
 
-for (let i = 0; i < activities.length; i++) {
-  const a = activities[i];
-  const elL = document.getElementById('atv' + (i + 1));
-  const elR = document.getElementById('atv' + (i + 7));
-  if (elL) elL.innerHTML = a.emoji;
-  if (elR) elR.innerHTML = a.emoji;
-}
+// preenche o emoji das atividades
+document.querySelectorAll('.activity').forEach(el => {
+  const num = el.id.replace(/^[ls]atv/, '');
+  const act = ACTIVITIES.find(a => a.id === num);
+  if (act) el.innerHTML = act.emoji;
+});
 
 // Controles: jogador 1 = setas, jogador 2 = WASD
 document.addEventListener('keydown', (e) => {
@@ -56,7 +59,12 @@ document.addEventListener('keyup', (e) => {
   players[2].keys[k] = false;
 });
 
-function movePlayer(player, owner, el, petId) {
+function overlap(a, b) {
+  return !(a.right <= b.left || a.left >= b.right ||
+           a.bottom <= b.top || a.top >= b.bottom);
+}
+
+function movePlayer(player, owner, el, petId, emojiSelector) {
   const k = player.keys;
   const dx = (k['d'] || k['ArrowRight'] ? 1 : 0) - (k['a'] || k['ArrowLeft'] ? 1 : 0);
   const dy = (k['s'] || k['ArrowDown'] ? 1 : 0) - (k['w'] || k['ArrowUp'] ? 1 : 0);
@@ -64,8 +72,8 @@ function movePlayer(player, owner, el, petId) {
   let nx = player.pos.x + dx * STEP;
   let ny = player.pos.y + dy * STEP;
 
-  nx = Math.max(0, Math.min(WORLD_W - 56, nx));
-  ny = Math.max(0, Math.min(WORLD_H - 56, ny));
+  nx = Math.max(0, Math.min(WORLD_W - 60, nx));
+  ny = Math.max(0, Math.min(WORLD_H - 60, ny));
 
   player.pos.x = nx;
   player.pos.y = ny;
@@ -75,31 +83,44 @@ function movePlayer(player, owner, el, petId) {
   // Pet segue a princesa
   const pet = pets[petId];
   const petEl = document.getElementById(petId);
-  pet.pos.x = nx + (dx !== 0 ? (dx > 0 ? -50 : 50) : 50);
-  pet.pos.y = ny + (dy !== 0 ? (dy > 0 ? -50 : 50) : 50);
-  pet.pos.x = Math.max(0, Math.min(WORLD_W - 56, pet.pos.x));
-  pet.pos.y = Math.max(0, Math.min(WORLD_H - 56, pet.pos.y));
+  pet.pos.x = nx + (dx !== 0 ? (dx > 0 ? 60 : -60) : 60);
+  pet.pos.y = ny + (dy !== 0 ? (dy > 0 ? 60 : -60) : 60);
+  pet.pos.x = Math.max(0, Math.min(WORLD_W - 60, pet.pos.x));
+  pet.pos.y = Math.max(0, Math.min(WORLD_H - 60, pet.pos.y));
   petEl.style.left = pet.pos.x + 'px';
   petEl.style.top = pet.pos.y + 'px';
 }
 
+function checkWardrobe(owner, player, emojiSelector) {
+  if (dresses[owner]) return;
+  const wardrobeEl = owner === 1 ? wardrobeLaisEl : wardrobeSofiaEl;
+  const pEl = owner === 1 ? laisEl : sofiaEl;
+  if (overlap(wardrobeEl.getBoundingClientRect(), pEl.getBoundingClientRect())) {
+    dresses[owner] = true;
+    const princessName = owner === 1 ? 'Lais' : 'Sofia';
+    const emojiEl = pEl.querySelector(emojiSelector);
+    // troca de visual
+    const princessDress = owner === 1 ? '👸' : '👸';
+    emojiEl.textContent = owner === 1 ? '💃' : '🩰';
+    showModal('Roupa trocada! 👗', princessName + ' trocou de roupa e ficou ainda mais linda! Agora sem os animais ela faz tudo no castelo!');
+    checkActivities(owner, player);
+  }
+}
+
 function checkActivities(owner, player) {
-  document.querySelectorAll('.activity').forEach((el) => {
+  const pEl = owner === 1 ? laisEl : sofiaEl;
+  const princessName = owner === 1 ? 'Lais' : 'Sofia';
+  document.querySelectorAll('.activity').forEach(el => {
     if (activityOwner[el.id] !== owner || el.classList.contains('done')) return;
-    const aRect = el.getBoundingClientRect();
-    const pRect = (owner === 1 ? laisEl : sofiaEl).getBoundingClientRect();
-    const overlap = !(aRect.right < pRect.left || aRect.left > pRect.right ||
-                      aRect.bottom < pRect.top || aRect.top > pRect.bottom);
-    if (overlap) {
-      el.classList.add('done');
-      scores[owner]++;
-      updateUI();
-      const actId = parseInt(el.id.replace('atv', ''));
-      const actIndex = actId > 6 ? actId - 7 : actId - 1;
-      showModal('Atividade concluída!', 'A princesa ' + (owner === 1 ? 'Lais' : 'Sofia') + ' completou: ' + activities[actIndex].name);
-      if (scores[owner] === 6) {
-        showModal('🏰 Castelo completo! 🏰', 'A princesa ' + (owner === 1 ? 'Lais' : 'Sofia') + ' fez tudo que deu no castelo! Parabéns! 🎉');
-      }
+    if (!overlap(el.getBoundingClientRect(), pEl.getBoundingClientRect())) return;
+    el.classList.add('done');
+    scores[owner]++;
+    updateUI();
+    const num = el.id.replace(/^[ls]atv/, '');
+    const act = ACTIVITIES.find(a => a.id === num);
+    showModal('Atividade concluída! ✨', princessName + ' fez: ' + act.name + '!');
+    if (scores[owner] === 8) {
+      showModal('🏰 Castelo completo! 🏰', princessName + ' fez tudo que deu no castelo! Parabéns! 🎉');
     }
   });
 }
@@ -107,8 +128,8 @@ function checkActivities(owner, player) {
 function updateUI() {
   document.getElementById('laisScore').textContent = scores[1];
   document.getElementById('sofiaScore').textContent = scores[2];
-  document.getElementById('laisBar').style.width = (scores[1] / 6 * 100) + '%';
-  document.getElementById('sofiaBar').style.width = (scores[2] / 6 * 100) + '%';
+  document.getElementById('laisBar').style.width = (scores[1] / 8 * 100) + '%';
+  document.getElementById('sofiaBar').style.width = (scores[2] / 8 * 100) + '%';
 }
 
 function showModal(title, text) {
@@ -120,14 +141,15 @@ function showModal(title, text) {
 }
 
 function gameLoop() {
-  movePlayer(players[1], 1, laisEl, 'gato');
-  movePlayer(players[2], 2, sofiaEl, 'cachorro');
+  movePlayer(players[1], 1, laisEl, 'gato', '.lais-emoji');
+  movePlayer(players[2], 2, sofiaEl, 'cachorro', '.sofia-emoji');
+  checkWardrobe(1, players[1], '.lais-emoji');
+  checkWardrobe(2, players[2], '.sofia-emoji');
   checkActivities(1, players[1]);
   checkActivities(2, players[2]);
   requestAnimationFrame(gameLoop);
 }
 
-// Inicializar posições
 function init() {
   laisEl.style.left = players[1].pos.x + 'px';
   laisEl.style.top = players[1].pos.y + 'px';
